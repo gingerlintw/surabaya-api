@@ -35,7 +35,7 @@ async function fetchBMKG() {
     return [{
       id: `bmkg-${gempa.DateTime}`,
       type: "EARTHQUAKE", 
-      title: `🚨 [BMKG 官方] Gempa Bumi ${gempa.Magnitude} SR`,
+      title: `🚨 [BMKG Official] Gempa Bumi ${gempa.Magnitude} SR`,
       description: `Lokasi: ${gempa.Wilayah}. ${gempa.Potensi}`,
       latitude: parseFloat(coords[0]),
       longitude: parseFloat(coords[1]),
