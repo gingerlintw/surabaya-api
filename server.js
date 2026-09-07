@@ -85,7 +85,7 @@ async function fetchPetaBencana() {
 // ==========================================
 
 app.get('/api/incidents', async (req, res) => {
-  const { lat, lng, radius = 9999 } = req.query;
+  const { lat, lng, radius = 15 } = req.query;
   
   // 1. 同步獲取本地 + 兩大真實 API 數據
   const [bmkgData, petaBencanaData] = await Promise.all([fetchBMKG(), fetchPetaBencana()]);
