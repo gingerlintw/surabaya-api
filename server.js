@@ -51,20 +51,33 @@ async function fetchBMKG() {
 }
 
 // [來源 2] PetaBencana.id: 印尼官方認可災情開源平台 (真實民眾水災回報)
+// [來源 2] PetaBencana.id: 印尼官方認可災情開源平台 (真實民眾各類災情回報)
 async function fetchPetaBencana() {
   try {
     // 抓取全印尼最新的回報 (GeoJSON 格式)
     const res = await fetch('https://data.petabencana.id/reports');
     const data = await res.json();
     
+    // 🌟 建立災情類型對應表
+    const disasterMapping = {
+      'flood': { type: 'FLOOD', emoji: '💧' },
+      'fire':  { type: 'FIRE', emoji: '🔥' },
+      'haze':  { type: 'HAZE', emoji: '🌫️' },
+      'wind':  { type: 'WIND', emoji: '🌪️' }
+    };
+
     // 只取最新的 50 筆，並轉譯為我們的格式
     return data.features.slice(0, 50).map(feature => {
       const props = feature.properties;
       const coords = feature.geometry.coordinates; // GeoJSON 是 [lng, lat]
+      
+      // 比對災情類型，若 API 回傳未知的分類，預設歸類為 OTHER_HAZARD
+      const mappedDisaster = disasterMapping[props.disaster_type] || { type: 'OTHER_HAZARD', emoji: '⚠️' };
+
       return {
         id: `pb-${props.pkey}`,
-        type: props.disaster_type === 'flood' ? 'FLOOD' : 'ROAD_HAZARD',
-        title: `💧 [PetaBencana] Laporan ${props.disaster_type}`,
+        type: mappedDisaster.type,
+        title: `${mappedDisaster.emoji} [PetaBencana] Laporan ${props.disaster_type}`,
         description: props.text || "Tidak ada deskripsi detail.",
         latitude: coords[1],
         longitude: coords[0],
